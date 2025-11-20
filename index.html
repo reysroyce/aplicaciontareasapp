@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Mi App de Tareas</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
+</head>
+<body>
+
+<h1>✅ Mis Tareas</h1>
+
+<div id="login">
+  <input type="email" id="email" placeholder="Correo">
+  <input type="password" id="password" placeholder="Contraseña">
+  <button onclick="login()">Iniciar sesión</button>
+</div>
+
+<div id="app" style="display:none;">
+  <input type="text" id="tarea" placeholder="Nueva tarea">
+  <button onclick="guardarTarea()">Guardar</button>
+  
+  <ul id="lista"></ul>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+
+<script src="app.js"></script>
+</body>
+</html>
