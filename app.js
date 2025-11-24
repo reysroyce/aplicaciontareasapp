@@ -1,4 +1,11 @@
-// Configuración de Firebase
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: "AIzaSyCV-ty_cjljVwVmKxbNWKRLgk--92DEMuw",
   authDomain: "tareas-f0aac.firebaseapp.com",
@@ -9,11 +16,9 @@ const firebaseConfig = {
   measurementId: "G-VREW5NQ24R"
 };
 
-// Inicializar Firebase
-firebase.initializeApp(firebaseConfig);
-
-const auth = firebase.auth();
-const db = firebase.firestore();
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
 
 // Elementos HTML
 const loginDiv = document.getElementById("login");
@@ -72,3 +77,4 @@ function cargarTareas() {
       });
     });
 }
+
