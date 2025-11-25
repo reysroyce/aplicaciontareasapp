@@ -1,21 +1,25 @@
-// 🔥 CONFIGURACIÓN FIREBASE
+// Firebase Config
 const firebaseConfig = {
   apiKey: "AIzaSyCV-ty_cjljVwVmKxbNWKRLgk--92DEMuw",
   authDomain: "tareas-f0aac.firebaseapp.com",
   projectId: "tareas-f0aac",
-  storageBucket: "tareas-f0aac.firebasestorage.app",
+  storageBucket: "tareas-f0aac.appspot.com",
   messagingSenderId: "724287254480",
-  appId: "1:724287254480:web:afd1d691a4056e11b5d3d5"
+  appId: "1:724287254480:web:afd1d691a4056e11b5d3d5",
+  measurementId: "G-VREW5NQ24R"
 };
 
 // Inicializar Firebase
 firebase.initializeApp(firebaseConfig);
 
-// Referencias
 const auth = firebase.auth();
 const db = firebase.firestore();
 
-// 🔐 LOGIN
+// Habilitar modo offline
+db.enablePersistence()
+  .catch((err) => console.log("Offline error:", err));
+
+// LOGIN
 function login() {
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
@@ -26,38 +30,29 @@ function login() {
       document.getElementById("app").style.display = "block";
       cargarTareas();
     })
-    .catch(error => {
-      alert("❌ Error: " + error.message);
-    });
+    .catch(error => alert("Error: " + error.message));
 }
 
-// ✅ GUARDAR TAREA
+// GUARDAR TAREA
 function guardarTarea() {
-  const texto = document.getElementById("tarea").value;
-
-  if(texto.trim() === "") return alert("Escribe algo");
+  const tarea = document.getElementById("tarea").value;
 
   db.collection("tareas").add({
-    texto: texto,
-    fecha: new Date()
-  }).then(() => {
-    document.getElementById("tarea").value = "";
-  })
-  .catch(error => alert("Error guardando: " + error.message));
+    texto: tarea,
+    fecha: firebase.firestore.FieldValue.serverTimestamp()
+  });
+
+  document.getElementById("tarea").value = "";
 }
 
-// 📥 CARGAR TAREAS
+// LEER TAREAS
 function cargarTareas() {
-  db.collection("tareas")
-    .orderBy("fecha", "desc")
-    .onSnapshot(snapshot => {
-      const lista = document.getElementById("lista");
-      lista.innerHTML = "";
+  db.collection("tareas").onSnapshot(snapshot => {
+    const lista = document.getElementById("lista");
+    lista.innerHTML = "";
 
-      snapshot.forEach(doc => {
-        const li = document.createElement("li");
-        li.textContent = doc.data().texto;
-        lista.appendChild(li);
-      });
+    snapshot.forEach(doc => {
+      lista.innerHTML += `<li>${doc.data().texto}</li>`;
     });
+  });
 }
