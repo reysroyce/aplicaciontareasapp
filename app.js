@@ -1,80 +1,63 @@
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+// 🔥 CONFIGURACIÓN FIREBASE
 const firebaseConfig = {
   apiKey: "AIzaSyCV-ty_cjljVwVmKxbNWKRLgk--92DEMuw",
   authDomain: "tareas-f0aac.firebaseapp.com",
   projectId: "tareas-f0aac",
   storageBucket: "tareas-f0aac.firebasestorage.app",
   messagingSenderId: "724287254480",
-  appId: "1:724287254480:web:afd1d691a4056e11b5d3d5",
-  measurementId: "G-VREW5NQ24R"
+  appId: "1:724287254480:web:afd1d691a4056e11b5d3d5"
 };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+// Inicializar Firebase
+firebase.initializeApp(firebaseConfig);
 
-// Elementos HTML
-const loginDiv = document.getElementById("login");
-const appDiv = document.getElementById("app");
-const lista = document.getElementById("lista");
+// Referencias
+const auth = firebase.auth();
+const db = firebase.firestore();
 
-// Función de login
+// 🔐 LOGIN
 function login() {
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
 
   auth.signInWithEmailAndPassword(email, password)
-    .then((userCredential) => {
-      loginDiv.style.display = "none";
-      appDiv.style.display = "block";
+    .then(() => {
+      document.getElementById("login").style.display = "none";
+      document.getElementById("app").style.display = "block";
       cargarTareas();
     })
-    .catch((error) => {
-      alert("Error: " + error.message);
+    .catch(error => {
+      alert("❌ Error: " + error.message);
     });
 }
 
-// Guardar tarea
+// ✅ GUARDAR TAREA
 function guardarTarea() {
-  const tarea = document.getElementById("tarea").value;
-  const user = auth.currentUser;
+  const texto = document.getElementById("tarea").value;
 
-  if (!user) {
-    alert("Debes iniciar sesión");
-    return;
-  }
+  if(texto.trim() === "") return alert("Escribe algo");
 
   db.collection("tareas").add({
-    texto: tarea,
-    uid: user.uid,
-    fecha: firebase.firestore.FieldValue.serverTimestamp()
-  });
-
-  document.getElementById("tarea").value = "";
+    texto: texto,
+    fecha: new Date()
+  }).then(() => {
+    document.getElementById("tarea").value = "";
+  })
+  .catch(error => alert("Error guardando: " + error.message));
 }
 
-// Cargar tareas
+// 📥 CARGAR TAREAS
 function cargarTareas() {
-  const user = auth.currentUser;
-
   db.collection("tareas")
-    .where("uid", "==", user.uid)
-    .onSnapshot((snapshot) => {
-
+    .orderBy("fecha", "desc")
+    .onSnapshot(snapshot => {
+      const lista = document.getElementById("lista");
       lista.innerHTML = "";
 
-      snapshot.forEach((doc) => {
+      snapshot.forEach(doc => {
         const li = document.createElement("li");
         li.textContent = doc.data().texto;
         lista.appendChild(li);
       });
     });
 }
-
